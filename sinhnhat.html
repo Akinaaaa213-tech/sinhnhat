@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Gửi một nửa của em, Nhật Minh ❤️</title>
+    <style>
+        :root {
+            --primary-color: #ff4757;
+            --bg-color: #f1f2f6;
+            --text-color: #2f3542;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent; 
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            margin: 0;
+            background-color: var(--bg-color);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            min-height: 100dvh; 
+            text-align: center;
+            color: var(--text-color);
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        /* --- CÁC MÀN HÌNH CHUNG --- */
+        .screen {
+            width: 100%;
+            max-width: 450px;
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        /* --- MÀN 1: KHÓA --- */
+        #lockScreen {
+            background: white;
+            padding: 35px 25px;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            max-width: 380px;
+        }
+
+        .shake { animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-2px, 0, 0); }
+            20%, 80% { transform: translate3d(4px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-6px, 0, 0); }
+            40%, 60% { transform: translate3d(6px, 0, 0); }
+        }
+
+        input {
+            width: 100%;
+            height: 55px;
+            padding: 0 15px;
+            margin: 20px 0;
+            border: 2px solid #dfe4ea;
+            border-radius: 14px;
+            font-size: 16px;
+            outline: none;
+            text-align: center;
+            background-color: #f8f9fa;
+        }
+        input:focus { border-color: var(--primary-color); background-color: white; }
+        
+        .btn-primary {
+            width: 100%;
+            height: 55px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: 17px;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(255, 71, 87, 0.25);
+        }
+        .btn-primary:active { transform: scale(0.96); }
+
+        /* --- MÀN 2: THIỆP --- */
+        #mainContent {
+            display: none;
+            opacity: 0;
+            padding: 20px 0 50px 0;
+        }
+        
+        .card-container {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            margin-top: 30px;
+        }
+        
+        .card {
+            width: 100%;
+            height: 360px;
+            perspective: 1500px;
+            user-select: none; 
+            -webkit-user-select: none;
+        }
+        
+        .card-inner {
+            width: 100%;
+            height: 100%;
+            transition: transform 0.7s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+            position: relative;
+        }
+        
+        .card.flipped .card-inner { transform: rotateY(180deg); }
+        
+        .card-front, .card-back {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+            border: 1px solid rgba(255,255,255,0.5);
+        }
+        
+        .card-front {
+            background: linear-gradient(135deg, var(--primary-color), #ff6b81);
+            color: white;
+            font-size: 24px;
+            font-weight: 800;
+        }
+        
+        .card-back {
+            background: white;
+            transform: rotateY(180deg);
+            font-size: 15px;
+            line-height: 1.5;
+        }
+        .card-back img {
+            width: 100%;
+            height: 230px; 
+            object-fit: contain; 
+            background-color: #fcfcfc;
+            border-radius: 12px;
+            margin-bottom: 10px;
+        }
+
+        /* --- MÀN 3: CÂU HỎI --- */
+        #questionScreen {
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 40px;
+        }
+        .btn-choice {
+            width: 130px;
+            height: 55px;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            border-radius: 28px;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+        }
+        .btn-yes { background-color: #2ed573; }
+        .btn-yes:active { transform: scale(0.95); }
+        
+        /* Nút Không dùng fixed để có thể chạy khắp màn hình */
+        .btn-no { background-color: var(--primary-color); z-index: 999; }
+
+        /* --- MÀN 4: KẾT THÚC --- */
+        #finalScreen {
+            display: none;
+            opacity: 0;
+            transform: scale(0.9);
+        }
+        .heart-bounce {
+            font-size: 80px;
+            animation: pulse 1s infinite alternate;
+            margin-bottom: 20px;
+        }
+        @keyframes pulse {
+            from { transform: scale(1); }
+            to { transform: scale(1.15); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- MÀN 1 -->
+    <div id="lockScreen" class="screen">
+        <h2 style="margin-top:0; font-size: 24px;">Mật mã tình yêu 🔒</h2>
+        <p style="font-size: 14px; color: #747d8c;">Hôm nay là ngày gì nhỉ?</p>
+        <input type="tel" id="passwordInput" placeholder="Nhập vào đây (VD: 1205)" onkeypress="handleEnter(event)">
+        <button class="btn-primary" onclick="checkPassword()">MỞ KHÓA</button>
+        <p id="errorMsg" style="color: var(--primary-color); display: none; margin-bottom:0; font-size: 14px; margin-top: 20px;">
+            Nhớ nhầm ngày rồi đấy, nhập lại đi! 😤
+        </p>
+    </div>
+
+    <!-- MÀN 2 -->
+    <div id="mainContent" class="screen">
+        <h1 style="font-size: 28px; margin-bottom: 5px;">🎉 Happy Birthday! 🎉</h1>
+        <p style="color: #747d8c; font-size: 15px; margin-top: 0;">Chạm vào từng tấm thiệp nhé 👇</p>
+        
+        <div class="card-container">
+            <div class="card" onclick="flipCard(this, 1)">
+                <div class="card-inner">
+                    <div class="card-front">❤️</div>
+                    <div class="card-back">
+                        <p>Anh luôn quan tâm và bao bọc em, anh cũng tha thứ cho nhiều sai lầm của em, em yêu anh lắm🥰</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" onclick="flipCard(this, 2)">
+                <div class="card-inner">
+                    <div class="card-front">📸</div>
+                    <div class="card-back">
+                        <img src="https://i.postimg.cc/j5YnzZ9f/Screenshot-2026-08-08-210049.png" alt="Kỷ niệm">
+                        <p>coi anh kìa :></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MÀN 3 -->
+    <div id="questionScreen" class="screen">
+        <h1 style="font-size: 32px;">Anh có yêu em không? 🥺</h1>
+        <p style="color: #747d8c;">Trả lời thật lòng đi nhé!</p>
+        <div class="btn-group">
+            <button id="btnYes" class="btn-choice btn-yes" onclick="showFinalScreen()">Có 😍</button>
+            <!-- Bắt cả sự kiện chạm trên mobile và di chuột trên PC -->
+            <button id="btnNo" class="btn-choice btn-no" onmouseover="dodge()" ontouchstart="dodge()">Không 😒</button>
+        </div>
+    </div>
+
+    <!-- MÀN 4 -->
+    <div id="finalScreen" class="screen">
+        <div class="heart-bounce">❤️</div>
+        <h1 style="font-size: 32px; color: var(--primary-color);">Em yêu anh !</h1>
+        <p style="font-size: 18px; font-weight: bold;">Chúc mừng sinh nhật nhé! 🎂🎉</p>
+    </div>
+
+    <script>
+        /* === LOGIC MÀN 1: KHÓA === */
+        const VALID_PASSWORDS = ["0509", "05/09", "05092026"]; 
+
+        function checkPassword() {
+            const input = document.getElementById('passwordInput');
+            const lockScreen = document.getElementById('lockScreen');
+            const mainContent = document.getElementById('mainContent');
+            const errorMsg = document.getElementById('errorMsg');
+
+            const rawPass = input.value.trim();
+            const cleanPass = rawPass.replace(/[-\s\/]/g, ""); 
+            const isValid = VALID_PASSWORDS.includes(rawPass) || VALID_PASSWORDS.includes(cleanPass);
+
+            if (isValid) {
+                input.blur();
+                lockScreen.style.opacity = '0';
+                setTimeout(() => {
+                    lockScreen.style.display = 'none';
+                    document.body.style.display = 'block';
+                    
+                    mainContent.style.display = 'block';
+                    mainContent.style.margin = '0 auto';
+                    setTimeout(() => mainContent.style.opacity = '1', 50);
+                }, 400); 
+            } else {
+                errorMsg.style.display = 'block';
+                lockScreen.classList.remove('shake');
+                void lockScreen.offsetWidth; 
+                lockScreen.classList.add('shake');
+            }
+        }
+        function handleEnter(e) { if (e.key === 'Enter') checkPassword(); }
+
+        /* === LOGIC MÀN 2: LẬT THẺ === */
+        const viewedCards = new Set(); // Dùng Set để lưu những thẻ ĐÃ lật (tránh đếm trùng)
+
+        function flipCard(element, cardId) {
+            element.classList.toggle('flipped');
+            
+            // Nếu lật thẻ ra mặt sau (card.flipped tồn tại) thì thêm vào Set
+            if(element.classList.contains('flipped')) {
+                viewedCards.add(cardId);
+            }
+
+            // Nếu đã lật đủ 2 thẻ độc lập
+            if(viewedCards.size === 2) {
+                // Đợi 3.5 giây để người dùng ngắm ảnh rồi tự động chuyển
+                setTimeout(() => {
+                    const mainContent = document.getElementById('mainContent');
+                    const questionScreen = document.getElementById('questionScreen');
+                    
+                    mainContent.style.opacity = '0';
+                    setTimeout(() => {
+                        mainContent.style.display = 'none';
+                        
+                        document.body.style.display = 'flex'; // Trả body về flex để căn giữa câu hỏi
+                        questionScreen.style.display = 'block';
+                        setTimeout(() => {
+                            questionScreen.style.opacity = '1';
+                            questionScreen.style.transform = 'translateY(0)';
+                        }, 50);
+                    }, 600);
+                }, 3500); 
+            }
+        }
+
+        /* === LOGIC MÀN 3: NÚT "KHÔNG" NẾ ĐÒN === */
+        function dodge() {
+            const btnNo = document.getElementById('btnNo');
+            const btnYes = document.getElementById('btnYes');
+            
+            // Kích thước cửa sổ trình duyệt hiện tại
+            const maxX = window.innerWidth - btnNo.offsetWidth - 20;
+            const maxY = window.innerHeight - btnNo.offsetHeight - 20;
+            
+            // Lấy tọa độ của nút Có để né
+            const yesRect = btnYes.getBoundingClientRect();
+            // Mở rộng vùng cấm (bounding box + margin) để không đè lên nút Có
+            const padding = 20; 
+            const avoidBox = {
+                left: yesRect.left - padding,
+                right: yesRect.right + padding,
+                top: yesRect.top - padding,
+                bottom: yesRect.bottom + padding
+            };
+
+            let randomX, randomY;
+            let isOverlapping = true;
+            let safetyCounter = 0; // Tránh treo trình duyệt nếu màn hình quá nhỏ
+
+            // Vòng lặp tìm tọa độ mới thỏa mãn: Không đè lên nút CÓ
+            while (isOverlapping && safetyCounter < 100) {
+                randomX = Math.max(20, Math.random() * maxX);
+                randomY = Math.max(20, Math.random() * maxY);
+
+                // Kiểm tra xem tọa độ ngẫu nhiên có chui vào vùng cấm không
+                if (
+                    randomX + btnNo.offsetWidth > avoidBox.left &&
+                    randomX < avoidBox.right &&
+                    randomY + btnNo.offsetHeight > avoidBox.top &&
+                    randomY < avoidBox.bottom
+                ) {
+                    isOverlapping = true; // Bị đè lên nút Có -> random lại
+                } else {
+                    isOverlapping = false; // Tọa độ an toàn
+                }
+                safetyCounter++;
+            }
+
+            // Áp dụng tọa độ an toàn cho nút Không
+            btnNo.style.position = 'fixed';
+            btnNo.style.left = randomX + 'px';
+            btnNo.style.top = randomY + 'px';
+        }
+
+        /* === LOGIC MÀN 4: KẾT THÚC === */
+        function showFinalScreen() {
+            const questionScreen = document.getElementById('questionScreen');
+            const finalScreen = document.getElementById('finalScreen');
+            
+            questionScreen.style.opacity = '0';
+            setTimeout(() => {
+                questionScreen.style.display = 'none';
+                
+                finalScreen.style.display = 'block';
+                setTimeout(() => {
+                    finalScreen.style.opacity = '1';
+                    finalScreen.style.transform = 'scale(1)';
+                }, 50);
+            }, 600);
+        }
+    </script>
+</body>
+</html>
